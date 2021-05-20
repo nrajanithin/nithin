@@ -1,0 +1,387 @@
+from pyspark.sql.types import FloatType
+from pyspark.sql.functions import max
+from pyspark.sql.functions import min
+
+yr2010 = "/data/weather/2010/"
+textdata_2010 = spark.read.format("csv").option("header", "true").option("delimiter","\t").load(yr2010)
+rdd1 = textdata_2010.rdd
+rdd2 = rdd1.map(lambda x: str(x).split('=')[1])
+rdd3 = rdd2.map(lambda x: ' '.join(x.split()))
+rdd4 = rdd3.map(lambda x: x[2:-2])
+removestar= udf(lambda x: x.replace("*", ""))
+changeprec = udf(lambda x: x.strip("ABCDEFGHI"))
+updatedData = rdd4.map(lambda x: x.split(' ')).toDF()
+dataclean2010 = updatedData.drop('_2','_5','_7','_9','_11','_13','_15')
+dataclean2010 = dataclean2010.withColumnRenamed('_1','STN').withColumnRenamed('_3','YEARMODA') \
+            .withColumnRenamed('_4','TEMP').withColumnRenamed('_6','DEWP') \
+            .withColumnRenamed('_8','SLP').withColumnRenamed('_10','STP') \
+            .withColumnRenamed('_12','VISIB').withColumnRenamed('_14','WDSP') \
+            .withColumnRenamed('_16','MXSPD').withColumnRenamed('_17','GUST') \
+            .withColumnRenamed('_18','MAX').withColumnRenamed('_19','MIN') \
+            .withColumnRenamed('_20','PRCP').withColumnRenamed('_21','SNDP') \
+            .withColumnRenamed('_22','FRSHTT').withColumn('MAX',removestar("MAX"))\
+            .withColumn('MIN', removestar("MIN")).withColumn('PRCP', changeprec("PRCP"))
+dataclean2010 = dataclean2010.withColumn("MAX",dataclean2010["MAX"].cast(FloatType()))
+dataclean2010 = dataclean2010.withColumn("MIN",dataclean2010["MIN"].cast(FloatType()))
+newdataclean2010 = dataclean2010.filter(dataclean2010.MAX!="9999.9" )
+newdataclean2010 = newdataclean2010.filter(newdataclean2010.MIN!="9999.9" )
+print("TASK-1")
+print("hottest and coldest day along the station code and date for 2010")
+from pyspark.sql.functions import max
+maxtemp2010 = newdataclean2010.select([max("MAX")]).show()
+print("Hottest day with the station code in the year 2010")
+newdataclean2010.filter(newdataclean2010['MAX'] == '132.8').select("STN","YEARMODA","MAX").show()
+from pyspark.sql.functions import min
+mintemp2010 = newdataclean2010.select([min("MIN")]).show()
+print("Coldest day with the station code in the year 2010")
+newdataclean2010.filter(newdataclean2010['MIN'] == '-115.2').select("STN","YEARMODA","MIN").show()
+
+yr2011 = "/data/weather/2011/"
+textdata_2011 = spark.read.format("csv").option("header", "true").option("delimiter","\t").load(yr2011)
+rdd1 = textdata_2011.rdd
+rdd2 = rdd1.map(lambda x: str(x).split('=')[1])
+rdd3 = rdd2.map(lambda x: ' '.join(x.split()))
+rdd4 = rdd3.map(lambda x: x[2:-2])
+removestar= udf(lambda x: x.replace("*", ""))
+changeprec = udf(lambda x: x.strip("ABCDEFGHI"))
+updatedData = rdd4.map(lambda x: x.split(' ')).toDF()
+dataclean2011 = updatedData.drop('_2','_5','_7','_9','_11','_13','_15')
+dataclean2011 = dataclean2011.withColumnRenamed('_1','STN').withColumnRenamed('_3','YEARMODA') \
+            .withColumnRenamed('_4','TEMP').withColumnRenamed('_6','DEWP') \
+            .withColumnRenamed('_8','SLP').withColumnRenamed('_10','STP') \
+            .withColumnRenamed('_12','VISIB').withColumnRenamed('_14','WDSP') \
+            .withColumnRenamed('_16','MXSPD').withColumnRenamed('_17','GUST') \
+            .withColumnRenamed('_18','MAX').withColumnRenamed('_19','MIN') \
+            .withColumnRenamed('_20','PRCP').withColumnRenamed('_21','SNDP') \
+            .withColumnRenamed('_22','FRSHTT').withColumn('MAX',removestar("MAX"))\
+            .withColumn('MIN', removestar("MIN")).withColumn('PRCP', changeprec("PRCP"))
+dataclean2011 = dataclean2011.withColumn("MAX",dataclean2011["MAX"].cast(FloatType()))
+dataclean2011 = dataclean2011.withColumn("MIN",dataclean2011["MIN"].cast(FloatType()))
+newdataclean2011 = dataclean2011.filter(dataclean2011.MAX!="9999.9" )
+newdataclean2011 = newdataclean2011.filter(newdataclean2011.MIN!="9999.9" )
+
+print("hottest and coldest day along the station code and date for 2011")
+from pyspark.sql.functions import max
+maxtemp2011 = newdataclean2011.select([max("MAX")]).show()
+print("Hottest day with the station code in the year 2011")
+newdataclean2011.filter(newdataclean2011['MAX'] == '131.0').select("STN","YEARMODA","MAX").show()
+from pyspark.sql.functions import min
+mintemp2011 = newdataclean2011.select([min("MIN")]).show()
+print("Coldest day with the station code in the year 2011")
+newdataclean2011.filter(newdataclean2011['MIN'] == '-111.8').select("STN","YEARMODA","MIN").show()
+
+yr2012 = "/data/weather/2012/"
+textdata2012 = spark.read.format("csv").option("header", "true").option("delimiter","\t").load(yr2012)
+rdd1 = textdata2012.rdd
+rdd2 = rdd1.map(lambda x: str(x).split('=')[1])
+rdd3 = rdd2.map(lambda x: ' '.join(x.split()))
+rdd4 = rdd3.map(lambda x: x[2:-2])
+removestar= udf(lambda x: x.replace("*", ""))
+changeprec = udf(lambda x: x.strip("ABCDEFGHI"))
+updatedData = rdd4.map(lambda x: x.split(' ')).toDF()
+dataclean2012 = updatedData.drop('_2','_5','_7','_9','_11','_13','_15')
+dataclean2012 = dataclean2012.withColumnRenamed('_1','STN').withColumnRenamed('_3','YEARMODA') \
+            .withColumnRenamed('_4','TEMP').withColumnRenamed('_6','DEWP') \
+            .withColumnRenamed('_8','SLP').withColumnRenamed('_10','STP') \
+            .withColumnRenamed('_12','VISIB').withColumnRenamed('_14','WDSP') \
+            .withColumnRenamed('_16','MXSPD').withColumnRenamed('_17','GUST') \
+            .withColumnRenamed('_18','MAX').withColumnRenamed('_19','MIN') \
+            .withColumnRenamed('_20','PRCP').withColumnRenamed('_21','SNDP') \
+            .withColumnRenamed('_22','FRSHTT').withColumn('MAX',removestar("MAX"))\
+            .withColumn('MIN', removestar("MIN")).withColumn('PRCP', changeprec("PRCP"))
+dataclean2012 = dataclean2012.withColumn("MAX",dataclean2012["MAX"].cast(FloatType()))
+dataclean2012 = dataclean2012.withColumn("MIN",dataclean2012["MIN"].cast(FloatType()))
+newdataclean2012 = dataclean2012.filter(dataclean2012.MAX!="9999.9" )
+newdataclean2012 = newdataclean2012.filter(newdataclean2012.MIN!="9999.9" )
+
+print("hottest and coldest day along the station code and date for 2012")
+from pyspark.sql.functions import max
+maxtemp2012 = newdataclean2012.select([max("MAX")]).show()
+from pyspark.sql.functions import min
+mintemp2012 = newdataclean2012.select([min("MIN")]).show()
+print("Hottest day with the station code in the year 2012")
+newdataclean2012.filter(newdataclean2012['MAX'] == '132.8').select("STN","YEARMODA","MAX").show()
+print("Coldest day with the station code in the year 2012")
+newdataclean2012.filter(newdataclean2012['MIN'] == '-119.6').select("STN","YEARMODA","MIN").show()
+
+yr2013 = "/data/weather/2013/"
+textdata2013 = spark.read.format("csv").option("header", "true").option("delimiter","\t").load(yr2013)
+rdd1 = textdata2013.rdd
+rdd2 = rdd1.map(lambda x: str(x).split('=')[1])
+rdd3 = rdd2.map(lambda x: ' '.join(x.split()))
+rdd4 = rdd3.map(lambda x: x[2:-2])
+removestar= udf(lambda x: x.replace("*", ""))
+changeprec = udf(lambda x: x.strip("ABCDEFGHI"))
+updatedData = rdd4.map(lambda x: x.split(' ')).toDF()
+dataclean2013 = updatedData.drop('_2','_5','_7','_9','_11','_13','_15')
+dataclean2013 = dataclean2013.withColumnRenamed('_1','STN').withColumnRenamed('_3','YEARMODA') \
+            .withColumnRenamed('_4','TEMP').withColumnRenamed('_6','DEWP') \
+            .withColumnRenamed('_8','SLP').withColumnRenamed('_10','STP') \
+            .withColumnRenamed('_12','VISIB').withColumnRenamed('_14','WDSP') \
+            .withColumnRenamed('_16','MXSPD').withColumnRenamed('_17','GUST') \
+            .withColumnRenamed('_18','MAX').withColumnRenamed('_19','MIN') \
+            .withColumnRenamed('_20','PRCP').withColumnRenamed('_21','SNDP') \
+            .withColumnRenamed('_22','FRSHTT').withColumn('MAX',removestar("MAX"))\
+            .withColumn('MIN', removestar("MIN")).withColumn('PRCP', changeprec("PRCP"))
+dataclean2013 = dataclean2013.withColumn("MAX",dataclean2013["MAX"].cast(FloatType()))
+dataclean2013 = dataclean2013.withColumn("MIN",dataclean2013["MIN"].cast(FloatType()))
+newdataclean2013 = dataclean2013.filter(dataclean2013.MAX!="9999.9" )
+newdataclean2013 = newdataclean2013.filter(newdataclean2013.MIN!="9999.9" )
+print("hottest and coldest day along the station code and date for 2013")
+from pyspark.sql.functions import max
+maxtemp2013 = newdataclean2013.select([max("MAX")]).show()
+from pyspark.sql.functions import min
+mintemp2013 = newdataclean2013.select([min("MIN")]).show()
+print("Hottest day with the station code in the year 2013")
+newdataclean2013.filter(newdataclean2013['MAX'] == '132.8').select("STN","YEARMODA","MAX").show()
+print("Coldest day with the station code in the year 2013")
+newdataclean2013.filter(newdataclean2013['MIN'] == '-115.1').select("STN","YEARMODA","MIN").show()
+
+yr2014 = "/data/weather/2014/"
+textdata2014 = spark.read.format("csv").option("header", "true").option("delimiter","\t").load(yr2014)
+rdd1 = textdata2014.rdd
+rdd2 = rdd1.map(lambda x: str(x).split('=')[1])
+rdd3 = rdd2.map(lambda x: ' '.join(x.split()))
+rdd4 = rdd3.map(lambda x: x[2:-2])
+removestar= udf(lambda x: x.replace("*", ""))
+changeprec = udf(lambda x: x.strip("ABCDEFGHI"))
+updatedData = rdd4.map(lambda x: x.split(' ')).toDF()
+dataclean2014 = updatedData.drop('_2','_5','_7','_9','_11','_13','_15')
+dataclean2014 = dataclean2014.withColumnRenamed('_1','STN').withColumnRenamed('_3','YEARMODA') \
+            .withColumnRenamed('_4','TEMP').withColumnRenamed('_6','DEWP') \
+            .withColumnRenamed('_8','SLP').withColumnRenamed('_10','STP') \
+            .withColumnRenamed('_12','VISIB').withColumnRenamed('_14','WDSP') \
+            .withColumnRenamed('_16','MXSPD').withColumnRenamed('_17','GUST') \
+            .withColumnRenamed('_18','MAX').withColumnRenamed('_19','MIN') \
+            .withColumnRenamed('_20','PRCP').withColumnRenamed('_21','SNDP') \
+            .withColumnRenamed('_22','FRSHTT').withColumn('MAX',removestar("MAX"))\
+            .withColumn('MIN', removestar("MIN")).withColumn('PRCP', changeprec("PRCP"))
+dataclean2014 = dataclean2014.withColumn("MAX",dataclean2014["MAX"].cast(FloatType()))
+dataclean2014 = dataclean2014.withColumn("MIN",dataclean2014["MIN"].cast(FloatType()))
+newdataclean2014 = dataclean2014.filter(dataclean2014.MAX!="9999.9" )
+newdataclean2014 = newdataclean2014.filter(newdataclean2014.MIN!="9999.9" )
+print("hottest and coldest day along the station code and date for 2014")
+from pyspark.sql.functions import max
+maxtemp2014 = newdataclean2014.select([max("MAX")]).show()
+from pyspark.sql.functions import min
+mintemp2014 = newdataclean2014.select([min("MIN")]).show()
+print("Hottest day with the station code in the year 2014")
+newdataclean2014.filter(newdataclean2014['MAX'] == '129.60').select("STN","YEARMODA","MAX").show()
+print("Coldest day with the station code in the year 2014")
+newdataclean2014.filter(newdataclean2014['MIN'] == '-113.40').select("STN","YEARMODA","MIN").show()
+
+yr2015 = "/data/weather/2015/"
+textdata2015 = spark.read.format("csv").option("header", "true").option("delimiter","\t").load(yr2015)
+rdd1 = textdata2015.rdd
+rdd2 = rdd1.map(lambda x: str(x).split('=')[1])
+rdd3 = rdd2.map(lambda x: ' '.join(x.split()))
+rdd4 = rdd3.map(lambda x: x[2:-2])
+removestar= udf(lambda x: x.replace("*", ""))
+changeprec = udf(lambda x: x.strip("ABCDEFGHI"))
+updatedData = rdd4.map(lambda x: x.split(' ')).toDF()
+dataclean2015 = updatedData.drop('_2','_5','_7','_9','_11','_13','_15')
+dataclean2015 = dataclean2015.withColumnRenamed('_1','STN').withColumnRenamed('_3','YEARMODA') \
+            .withColumnRenamed('_4','TEMP').withColumnRenamed('_6','DEWP') \
+            .withColumnRenamed('_8','SLP').withColumnRenamed('_10','STP') \
+            .withColumnRenamed('_12','VISIB').withColumnRenamed('_14','WDSP') \
+            .withColumnRenamed('_16','MXSPD').withColumnRenamed('_17','GUST') \
+            .withColumnRenamed('_18','MAX').withColumnRenamed('_19','MIN') \
+            .withColumnRenamed('_20','PRCP').withColumnRenamed('_21','SNDP') \
+            .withColumnRenamed('_22','FRSHTT').withColumn('MAX',removestar("MAX"))\
+            .withColumn('MIN', removestar("MIN")).withColumn('PRCP', changeprec("PRCP"))
+dataclean2015 = dataclean2015.withColumn("MAX",dataclean2015["MAX"].cast(FloatType()))
+dataclean2015 = dataclean2015.withColumn("MIN",dataclean2015["MIN"].cast(FloatType()))
+newdataclean2015 = dataclean2015.filter(dataclean2015.MAX!="9999.9" )
+newdataclean2015 = newdataclean2015.filter(newdataclean2015.MIN!="9999.9" )
+print("hottest and coldest day along the station code and date for 2015")
+from pyspark.sql.functions import max
+maxtemp2015 = newdataclean2015.select([max("MAX")]).show()
+from pyspark.sql.functions import min
+mintemp2015 = newdataclean2015.select([min("MIN")]).show()
+print("Hottest day with the station code in the year 2015")
+newdataclean2015.filter(newdataclean2015['MAX'] == '132.4').select("STN","YEARMODA","MAX").show()
+print("Coldest day with the station code in the year 2015")
+newdataclean2015.filter(newdataclean2015['MIN'] == '-114.2').select("STN","YEARMODA","MIN").show()
+
+yr2016 = "/data/weather/2016/"
+textdata2016 = spark.read.format("csv").option("header", "true").option("delimiter","\t").load(yr2016)
+rdd1 = textdata2016.rdd
+rdd2 = rdd1.map(lambda x: str(x).split('=')[1])
+rdd3 = rdd2.map(lambda x: ' '.join(x.split()))
+rdd4 = rdd3.map(lambda x: x[2:-2])
+removestar= udf(lambda x: x.replace("*", ""))
+changeprec = udf(lambda x: x.strip("ABCDEFGHI"))
+updatedData = rdd4.map(lambda x: x.split(' ')).toDF()
+dataclean2016 = updatedData.drop('_2','_5','_7','_9','_11','_13','_15')
+dataclean2016 = dataclean2016.withColumnRenamed('_1','STN').withColumnRenamed('_3','YEARMODA') \
+            .withColumnRenamed('_4','TEMP').withColumnRenamed('_6','DEWP') \
+            .withColumnRenamed('_8','SLP').withColumnRenamed('_10','STP') \
+            .withColumnRenamed('_12','VISIB').withColumnRenamed('_14','WDSP') \
+            .withColumnRenamed('_16','MXSPD').withColumnRenamed('_17','GUST') \
+            .withColumnRenamed('_18','MAX').withColumnRenamed('_19','MIN') \
+            .withColumnRenamed('_20','PRCP').withColumnRenamed('_21','SNDP') \
+            .withColumnRenamed('_22','FRSHTT').withColumn('MAX',removestar("MAX"))\
+            .withColumn('MIN', removestar("MIN")).withColumn('PRCP', changeprec("PRCP"))
+dataclean2016 = dataclean2016.withColumn("MAX",dataclean2016["MAX"].cast(FloatType()))
+dataclean2016 = dataclean2016.withColumn("MIN",dataclean2016["MIN"].cast(FloatType()))
+newdataclean2016 = dataclean2016.filter(dataclean2016.MAX!="9999.9" )
+newdataclean2016 = newdataclean2016.filter(newdataclean2016.MIN!="9999.9" )
+print("hottest and coldest day along the station code and date for 2016")
+from pyspark.sql.functions import max
+maxtemp2016 = newdataclean2016.select([max("MAX")]).show()
+from pyspark.sql.functions import min
+mintemp2016 = newdataclean2016.select([min("MIN")]).show()
+print("Hottest day with the station code in the year 2016")
+newdataclean2016.filter(newdataclean2016['MAX'] == '129.0').select("STN","YEARMODA","MAX").show()
+print("Coldest day with the station code in the year 2016")
+newdataclean2016.filter(newdataclean2016['MIN'] == '-115.1').select("STN","YEARMODA","MIN").show()
+
+yr2017 = "/data/weather/2017/"
+textdata2017 = spark.read.format("csv").option("header", "true").option("delimiter","\t").load(yr2017)
+rdd1 = textdata2017.rdd
+rdd2 = rdd1.map(lambda x: str(x).split('=')[1])
+rdd3 = rdd2.map(lambda x: ' '.join(x.split()))
+rdd4 = rdd3.map(lambda x: x[2:-2])
+removestar= udf(lambda x: x.replace("*", ""))
+changeprec = udf(lambda x: x.strip("ABCDEFGHI"))
+updatedData = rdd4.map(lambda x: x.split(' ')).toDF()
+dataclean2017 = updatedData.drop('_2','_5','_7','_9','_11','_13','_15')
+dataclean2017 = dataclean2017.withColumnRenamed('_1','STN').withColumnRenamed('_3','YEARMODA') \
+            .withColumnRenamed('_4','TEMP').withColumnRenamed('_6','DEWP') \
+            .withColumnRenamed('_8','SLP').withColumnRenamed('_10','STP') \
+            .withColumnRenamed('_12','VISIB').withColumnRenamed('_14','WDSP') \
+            .withColumnRenamed('_16','MXSPD').withColumnRenamed('_17','GUST') \
+            .withColumnRenamed('_18','MAX').withColumnRenamed('_19','MIN') \
+            .withColumnRenamed('_20','PRCP').withColumnRenamed('_21','SNDP') \
+            .withColumnRenamed('_22','FRSHTT').withColumn('MAX',removestar("MAX"))\
+            .withColumn('MIN', removestar("MIN")).withColumn('PRCP', changeprec("PRCP"))
+dataclean2017 = dataclean2017.withColumn("MAX",dataclean2017["MAX"].cast(FloatType()))
+dataclean2017 = dataclean2017.withColumn("MIN",dataclean2017["MIN"].cast(FloatType()))
+newdataclean2017 = dataclean2017.filter(dataclean2017.MAX!="9999.9" )
+newdataclean2017 = newdataclean2017.filter(newdataclean2017.MIN!="9999.9" )
+print("hottest and coldest day along the station code and date for 2017")
+from pyspark.sql.functions import max
+maxtemp2017 = newdataclean2017.select([max("MAX")]).show()
+from pyspark.sql.functions import min
+mintemp2017 = newdataclean2017.select([min("MIN")]).show()
+print("Hottest day with the station code in the year 2017")
+newdataclean2017.filter(newdataclean2017['MAX'] == '129.6').select("STN","YEARMODA","MAX").show()
+print("Coldest day with the station code in the year 2017")
+newdataclean2017.filter(newdataclean2017['MIN'] == '-116.0').select("STN","YEARMODA","MIN").show()
+
+yr2018 = "/data/weather/2018/"
+textdata2018 = spark.read.format("csv").option("header", "true").option("delimiter","\t").load(yr2018)
+rdd1 = textdata2018.rdd
+rdd2 = rdd1.map(lambda x: str(x).split('=')[1])
+rdd3 = rdd2.map(lambda x: ' '.join(x.split()))
+rdd4 = rdd3.map(lambda x: x[2:-2])
+removestar= udf(lambda x: x.replace("*", ""))
+changeprec = udf(lambda x: x.strip("ABCDEFGHI"))
+updatedData = rdd4.map(lambda x: x.split(' ')).toDF()
+dataclean2018 = updatedData.drop('_2','_5','_7','_9','_11','_13','_15')
+dataclean2018 = dataclean2018.withColumnRenamed('_1','STN').withColumnRenamed('_3','YEARMODA') \
+            .withColumnRenamed('_4','TEMP').withColumnRenamed('_6','DEWP') \
+            .withColumnRenamed('_8','SLP').withColumnRenamed('_10','STP') \
+            .withColumnRenamed('_12','VISIB').withColumnRenamed('_14','WDSP') \
+            .withColumnRenamed('_16','MXSPD').withColumnRenamed('_17','GUST') \
+            .withColumnRenamed('_18','MAX').withColumnRenamed('_19','MIN') \
+            .withColumnRenamed('_20','PRCP').withColumnRenamed('_21','SNDP') \
+            .withColumnRenamed('_22','FRSHTT').withColumn('MAX',removestar("MAX"))\
+            .withColumn('MIN', removestar("MIN")).withColumn('PRCP', changeprec("PRCP"))
+dataclean2018 = dataclean2018.withColumn("MAX",dataclean2018["MAX"].cast(FloatType()))
+dataclean2018 = dataclean2018.withColumn("MIN",dataclean2018["MIN"].cast(FloatType()))
+newdataclean2018 = dataclean2015.filter(dataclean2015.MAX!="9999.9" )
+newdataclean2018 = newdataclean2018.filter(newdataclean2018.MIN!="9999.9" )
+print("hottest and coldest day along the station code and date for 2018")
+from pyspark.sql.functions import max
+maxtemp2018 = newdataclean2018.select([max("MAX")]).show()
+from pyspark.sql.functions import min
+mintemp2018 = newdataclean2018.select([min("MIN")]).show()
+print("Hottest day with the station code in the year 2018")
+newdataclean2018.filter(newdataclean2018['MAX'] == '126.3').select("STN","YEARMODA","MAX").show()
+print("Coldest day with the station code in the year 2018")
+newdataclean2018.filter(newdataclean2018['MIN'] == '-116.3').select("STN","YEARMODA","MIN").show()
+
+yr2019 = "/data/weather/2019/"
+textdata2019 = spark.read.format("csv").option("header", "true").option("delimiter","\t").load(yr2019)
+rdd1 = textdata2019.rdd
+rdd2 = rdd1.map(lambda x: str(x).split('=')[1])
+rdd3 = rdd2.map(lambda x: ' '.join(x.split()))
+rdd4 = rdd3.map(lambda x: x[2:-2])
+removestar= udf(lambda x: x.replace("*", ""))
+changeprec = udf(lambda x: x.strip("ABCDEFGHI"))
+updatedData = rdd4.map(lambda x: x.split(' ')).toDF()
+dataclean2019 = updatedData.drop('_2','_5','_7','_9','_11','_13','_15')
+dataclean2019 = dataclean2019.withColumnRenamed('_1','STN').withColumnRenamed('_3','YEARMODA') \
+            .withColumnRenamed('_4','TEMP').withColumnRenamed('_6','DEWP') \
+            .withColumnRenamed('_8','SLP').withColumnRenamed('_10','STP') \
+            .withColumnRenamed('_12','VISIB').withColumnRenamed('_14','WDSP') \
+            .withColumnRenamed('_16','MXSPD').withColumnRenamed('_17','GUST') \
+            .withColumnRenamed('_18','MAX').withColumnRenamed('_19','MIN') \
+            .withColumnRenamed('_20','PRCP').withColumnRenamed('_21','SNDP') \
+            .withColumnRenamed('_22','FRSHTT').withColumn('MAX',removestar("MAX"))\
+            .withColumn('MIN', removestar("MIN")).withColumn('PRCP', changeprec("PRCP"))
+dataclean2019 = dataclean2019.withColumn("MAX",dataclean2019["MAX"].cast(FloatType()))
+dataclean2019 = dataclean2019.withColumn("MIN",dataclean2019["MIN"].cast(FloatType()))
+newdataclean2019 = dataclean2019.filter(dataclean2019.MAX!="9999.9" )
+newdataclean2019 = newdataclean2019.filter(newdataclean2019.MIN!="9999.9" )
+print("hottest and coldest day along the station code and date for 2019")
+from pyspark.sql.functions import max
+maxtemp2019 = newdataclean2019.select([max("MAX")]).show()
+from pyspark.sql.functions import min
+mintemp2019 = newdataclean2019.select([min("MIN")]).show()
+print("Hottest day with the station code in the year 2019")
+newdataclean2019.filter(newdataclean2019['MAX'] == '121.1').select("STN","YEARMODA","MAX").show()
+print("Coldest day with the station code in the year 2019")
+newdataclean2019.filter(newdataclean2019['MIN'] == '-102.1').select("STN","YEARMODA","MIN").show()
+
+
+joinallyears = newclean2010.unionAll(newclean2011)
+joinallyears = joinallyears.unionAll(newclean2012)
+joinallyears = joinallyears.unionAll(newclean2013)
+joinallyears = joinallyears.unionAll(newclean2014)
+joinallyears = joinallyears.unionAll(newclean2015)
+joinallyears = joinallyears.unionAll(newclean2016)
+joinallyears = joinallyears.unionAll(newclean2017)
+joinallyears = joinallyears.unionAll(newclean2018)
+joinallyears = joinallyears.unionAll(newclean2019)
+joinallyears = joinallyears.withColumn("MAX",joinallyears["MAX"].cast(FloatType()))
+joinallyears = joinallyears.withColumn("MIN",joinallyears["MIN"].cast(FloatType()))
+from pyspark.sql.functions import max
+print("TASK-2")
+print("hottest and coldest day across all years (2010 - 2019) along with station code and date")
+maxAllYearsTemp = joinallyears.select([max("MAX")]).show()
+from pyspark.sql.functions import min
+minAllYearsTemp = joinallyears.select([min("MIN")]).show()
+print("Hottest temperature across all the years (2010-2019)")
+joinallyears.filter(joinallyears['MAX'] == '132.8').select("STN","YEARMODA","MAX").show()
+print("Coldest temperature across all the years (2010-2019)")
+joinallyears.filter(joinallyears['MIN'] == '-119.6').select("STN","YEARMODA","MIN").show()
+
+
+print("TASK-3")
+print("Maximum and minimum precipitation with station code and date for year 2015")
+prcpclean = dataclean2015.filter(dataclean2015.PRCP!="99.99")
+dataclean2015 = dataclean2015.withColumn("PRCP",dataclean2015["PRCP"].cast(FloatType()))
+prcpclean = dataclean2015.filter(dataclean2015.PRCP!="99.99")
+maxPRCP2015 = prcpclean.select([max("Prcp")]).show()
+minPRCP2015 = prcpclean.select([min("Prcp")]).show()
+print("Maximum precipitation with station code in the year 2015")
+prcpclean.filter(prcpclean['Prcp'] == '19.49').select("STN","YEARMODA","PRCP").show()
+print("Minimum precipitation with station code in the year 2015")
+prcpclean.filter(prcpclean['Prcp'] == '0.0').select("STN","YEARMODA","PRCP").show()
+ 
+print("TASK-4")
+print("Count percentage missing values for mean station pressure (STP) for year 2019 and stations")
+stpmisscount = dataclean2019.filter(dataclean2019['STP'] == '9999.9').count()
+rowcount = dataclean2019.count()
+stpmisscount = float(stpmisscount)
+rowcount = float(rowcount)
+(stpmisscount/rowcount) * 100
+
+print("TASK-5")
+print("Station code with maximum wind gust and date for year 2019")
+dataclean2019 = dataclean2019.withColumn("GUST",dataclean2019["GUST"].cast(FloatType()))
+wind = dataclean2019.filter(Data2019.GUST!="999.9")
+maxwind2019 = wind.select([max("GUST")]).show()
+wind.filter(wind['GUST'] == '116.6').select("STN","YEARMODA","GUST").show()
