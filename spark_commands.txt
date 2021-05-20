@@ -1,7 +1,7 @@
 from pyspark.sql.types import FloatType
 from pyspark.sql.functions import max
 from pyspark.sql.functions import min
-
+SreeLekhaaa
 yr2010 = "/data/weather/2010/"
 textdata_2010 = spark.read.format("csv").option("header", "true").option("delimiter","\t").load(yr2010)
 rdd1 = textdata_2010.rdd
